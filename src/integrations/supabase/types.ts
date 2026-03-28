@@ -88,6 +88,39 @@ export type Database = {
         }
         Relationships: []
       }
+      freelancers: {
+        Row: {
+          availability: string | null
+          created_at: string
+          experience_years: number | null
+          hourly_rate: number | null
+          id: string
+          portfolio_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          availability?: string | null
+          created_at?: string
+          experience_years?: number | null
+          hourly_rate?: number | null
+          id?: string
+          portfolio_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          availability?: string | null
+          created_at?: string
+          experience_years?: number | null
+          hourly_rate?: number | null
+          id?: string
+          portfolio_url?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       likes: {
         Row: {
           created_at: string
@@ -116,6 +149,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ongs: {
+        Row: {
+          created_at: string
+          id: string
+          impact: string | null
+          logo_url: string | null
+          mission: string | null
+          org_name: string
+          project_category: string | null
+          updated_at: string
+          user_id: string
+          website_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          impact?: string | null
+          logo_url?: string | null
+          mission?: string | null
+          org_name: string
+          project_category?: string | null
+          updated_at?: string
+          user_id: string
+          website_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          impact?: string | null
+          logo_url?: string | null
+          mission?: string | null
+          org_name?: string
+          project_category?: string | null
+          updated_at?: string
+          user_id?: string
+          website_url?: string | null
+        }
+        Relationships: []
       }
       posts: {
         Row: {
@@ -151,7 +223,10 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          languages: string[] | null
           location: string | null
+          phone: string | null
+          profile_type: Database["public"]["Enums"]["profile_type"] | null
           skills: string[] | null
           updated_at: string
           user_id: string
@@ -162,7 +237,10 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          languages?: string[] | null
           location?: string | null
+          phone?: string | null
+          profile_type?: Database["public"]["Enums"]["profile_type"] | null
           skills?: string[] | null
           updated_at?: string
           user_id: string
@@ -173,7 +251,10 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          languages?: string[] | null
           location?: string | null
+          phone?: string | null
+          profile_type?: Database["public"]["Enums"]["profile_type"] | null
           skills?: string[] | null
           updated_at?: string
           user_id?: string
@@ -222,6 +303,36 @@ export type Database = {
         }
         Relationships: []
       }
+      volunteers: {
+        Row: {
+          areas_of_interest: string[] | null
+          availability: string | null
+          created_at: string
+          id: string
+          motivation: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          areas_of_interest?: string[] | null
+          availability?: string | null
+          created_at?: string
+          id?: string
+          motivation?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          areas_of_interest?: string[] | null
+          availability?: string | null
+          created_at?: string
+          id?: string
+          motivation?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -230,6 +341,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      profile_type: "freelancer" | "empregador" | "voluntario" | "ong"
       project_type: "freela" | "voluntariado"
     }
     CompositeTypes: {
@@ -358,6 +470,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      profile_type: ["freelancer", "empregador", "voluntario", "ong"],
       project_type: ["freela", "voluntariado"],
     },
   },
