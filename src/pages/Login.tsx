@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
@@ -8,11 +8,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { toast } from 'sonner';
 
 const Login = () => {
-  const { signIn } = useAuth();
+  const { signIn, user, profileType, getRedirectPath } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [waitingRedirect, setWaitingRedirect] = useState(false);
+
+  // Redirect once profileType is loaded after login
+  useEffect(() => {
+    if (waitingRedirect && user && profileType !== undefined) {
+      navigate(getRedirectPath());
+      setWaitingRedirect(false);
+    }
+  }, [waitingRedirect, user, profileType, navigate, getRedirectPath]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +29,7 @@ const Login = () => {
     try {
       await signIn(email, password);
       toast.success('Bem-vindo de volta!');
-      navigate('/dashboard');
+      setWaitingRedirect(true);
     } catch (err: any) {
       toast.error(err.message || 'Erro ao fazer login');
     } finally {
