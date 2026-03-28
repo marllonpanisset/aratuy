@@ -41,12 +41,22 @@ const PostCard = ({ post, onRefresh }: PostCardProps) => {
   };
 
   const loadComments = async () => {
-    const { data } = await supabase
+    const { data: commentsData } = await supabase
       .from('comments')
-      .select('*, profiles:user_id(display_name)')
+      .select('*')
       .eq('post_id', post.id)
       .order('created_at', { ascending: true });
-    setComments(data || []);
+    
+    if (!commentsData) { setComments([]); return; }
+
+    const userIds = [...new Set(commentsData.map(c => c.user_id))];
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('user_id, display_name')
+      .in('user_id', userIds);
+    
+    const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+    setComments(commentsData.map(c => ({ ...c, profiles: profileMap.get(c.user_id) || null })));
   };
 
   const handleToggleComments = () => {
