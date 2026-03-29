@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import Projects from "./pages/Projects";
 import Courses from "./pages/Courses";
 import FeedPage from "./pages/FeedPage";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
