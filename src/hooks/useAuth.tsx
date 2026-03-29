@@ -1,4 +1,4 @@
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import type { User, Session } from '@supabase/supabase-js';
 import type { Database } from '@/integrations/supabase/types';
@@ -9,11 +9,14 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  profileLoading: boolean;
   profileType: ProfileType | null;
+  profileError: string | null;
   signUp: (email: string, password: string, displayName?: string) => Promise<{ user: User | null }>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   getRedirectPath: () => string;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,12 +25,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
   const [profileType, setProfileType] = useState<ProfileType | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
 
-  const fetchProfileType = async (userId: string) => {
-    const { data } = await supabase.from('profiles').select('profile_type').eq('user_id', userId).single();
-    setProfileType(data?.profile_type ?? null);
-  };
+  const fetchProfileType = useCallback(async (userId: string) => {
+    setProfileLoading(true);
+    setProfileError(null);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('profile_type')
+        .eq('user_id', userId)
+        .maybeSingle();
+      if (error) throw error;
+      setProfileType(data?.profile_type ?? null);
+    } catch (err: any) {
+      console.error('Error fetching profile:', err);
+      setProfileError(err.message || 'Erro ao carregar perfil');
+      setProfileType(null);
+    } finally {
+      setProfileLoading(false);
+    }
+  }, []);
+
+  const refreshProfile = useCallback(async () => {
+    if (user) await fetchProfileType(user.id);
+  }, [user, fetchProfileType]);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -38,6 +62,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setTimeout(() => fetchProfileType(session.user.id), 0);
       } else {
         setProfileType(null);
+        setProfileLoading(false);
       }
     });
 
@@ -49,7 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
+  }, [fetchProfileType]);
 
   const signUp = async (email: string, password: string, displayName?: string) => {
     const { data, error } = await supabase.auth.signUp({
@@ -73,6 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     setProfileType(null);
+    setProfileError(null);
   };
 
   const getRedirectPath = (): string => {
@@ -86,7 +112,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, profileType, signUp, signIn, signOut, getRedirectPath }}>
+    <AuthContext.Provider value={{ user, session, loading, profileLoading, profileType, profileError, signUp, signIn, signOut, getRedirectPath, refreshProfile }}>
       {children}
     </AuthContext.Provider>
   );
