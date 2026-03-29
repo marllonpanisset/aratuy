@@ -8,8 +8,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { Separator } from '@/components/ui/separator';
 import { Briefcase, Building2, Heart, TreePine, ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
+import SocialLoginButtons from '@/components/SocialLoginButtons';
 
 type ProfileType = Database['public']['Enums']['profile_type'];
 
@@ -322,6 +324,18 @@ const Register = () => {
                 </Button>
               </div>
             </div>
+          )}
+
+          {step === 1 && (
+            <>
+              <div className="relative my-6">
+                <Separator />
+                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
+                  ou cadastre-se com
+                </span>
+              </div>
+              <SocialLoginButtons label="register" />
+            </>
           )}
 
           <p className="text-sm text-center text-muted-foreground mt-6">
