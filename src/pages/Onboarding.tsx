@@ -53,8 +53,8 @@ const Onboarding = () => {
   const [websiteUrl, setWebsiteUrl] = useState('');
 
   useEffect(() => {
-    if (!authLoading && !user) navigate('/login');
-    if (!authLoading && user && profileType) navigate(getRedirectPath());
+    if (!authLoading && !user) navigate('/login', { replace: true });
+    if (!authLoading && user && profileType) navigate(getRedirectPath(), { replace: true });
   }, [authLoading, user, profileType, navigate, getRedirectPath]);
 
   const handleSubmit = async () => {
