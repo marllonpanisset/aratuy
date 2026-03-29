@@ -326,6 +326,18 @@ const Register = () => {
             </div>
           )}
 
+          {step === 1 && (
+            <>
+              <div className="relative my-6">
+                <Separator />
+                <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
+                  ou cadastre-se com
+                </span>
+              </div>
+              <SocialLoginButtons label="register" />
+            </>
+          )}
+
           <p className="text-sm text-center text-muted-foreground mt-6">
             Já tem conta? <Link to="/login" className="text-primary hover:underline font-medium">Entrar</Link>
           </p>
