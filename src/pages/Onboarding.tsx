@@ -53,8 +53,8 @@ const Onboarding = () => {
   const [websiteUrl, setWebsiteUrl] = useState('');
 
   useEffect(() => {
-    if (!authLoading && !user) navigate('/login');
-    if (!authLoading && user && profileType) navigate(getRedirectPath());
+    if (!authLoading && !user) navigate('/login', { replace: true });
+    if (!authLoading && user && profileType) navigate(getRedirectPath(), { replace: true });
   }, [authLoading, user, profileType, navigate, getRedirectPath]);
 
   const handleSubmit = async () => {
@@ -111,7 +111,14 @@ const Onboarding = () => {
     }
   };
 
-  if (authLoading) return null;
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4 animate-fade-in">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <p className="text-sm text-muted-foreground">Carregando...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4 py-10">
