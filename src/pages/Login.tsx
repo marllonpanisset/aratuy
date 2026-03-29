@@ -5,7 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
+import SocialLoginButtons from '@/components/SocialLoginButtons';
 
 const Login = () => {
   const { signIn, user, profileType, getRedirectPath } = useAuth();
@@ -17,8 +19,18 @@ const Login = () => {
 
   // Redirect once profileType is loaded after login
   useEffect(() => {
-    if (waitingRedirect && user && profileType !== undefined) {
-      navigate(getRedirectPath());
+    if (user && profileType !== undefined) {
+      if (!profileType) {
+        navigate('/onboarding');
+      } else {
+        navigate(getRedirectPath());
+      }
+    } else if (waitingRedirect && user && profileType !== undefined) {
+      if (!profileType) {
+        navigate('/onboarding');
+      } else {
+        navigate(getRedirectPath());
+      }
       setWaitingRedirect(false);
     }
   }, [waitingRedirect, user, profileType, navigate, getRedirectPath]);
@@ -45,7 +57,16 @@ const Login = () => {
           <CardTitle className="text-2xl font-display">Entrar</CardTitle>
           <CardDescription>Acesse sua conta para continuar</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
+          <SocialLoginButtons label="login" />
+
+          <div className="relative">
+            <Separator />
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
+              ou com email
+            </span>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -59,7 +80,7 @@ const Login = () => {
               {loading ? 'Entrando...' : 'Entrar'}
             </Button>
           </form>
-          <p className="text-sm text-center text-muted-foreground mt-4">
+          <p className="text-sm text-center text-muted-foreground">
             Não tem conta? <Link to="/register" className="text-primary hover:underline font-medium">Cadastre-se</Link>
           </p>
         </CardContent>
