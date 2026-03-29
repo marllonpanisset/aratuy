@@ -8,8 +8,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { Separator } from '@/components/ui/separator';
 import { Briefcase, Building2, Heart, TreePine, ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
+import SocialLoginButtons from '@/components/SocialLoginButtons';
 
 type ProfileType = Database['public']['Enums']['profile_type'];
 
